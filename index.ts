@@ -23,27 +23,49 @@ app.listen(port, () => {
   console.log(`Escuchando puerto: ${port}`);
 });
 
-const dateNow = Date();
-
 (async () => {
   // connect to database
   await mongoose.connect('mongodb://127.0.0.1:27017/pinkmc');
 
-  // create new News
-  const newsItem = new News({
+  interface Noticias {
+    slug: String,
+    title: String,
+    description: String,
+    urlImage: String,
+  }
+
+  const noticia: Noticias = {
     slug: 'test',
     title: 'test',
     description: 'test',
     urlImage: 'test',
-    date: dateNow,
-  });
-  // await profile.save(); saves to the database
+  };
 
-  // read all Profiles
+  const agregarNews = (noticias: Noticias) => {
+    News.create(
+      {
+        slug: noticias.slug,
+        title: noticias.title,
+        description: noticias.description,
+        urlImage: noticias.urlImage,
+      }
+    )
+  }
+  
+  agregarNews(noticia);
+
+  const eliminarNews = (cardId: String) => {
+    News.deleteOne({ _id: cardId })
+  }
+
+  let cardId = '123as';
+  eliminarNews(cardId);
+
+  // read all News
   const newsItems = await News.find();
   console.log(newsItems);
 
-  app.get(`/stats`, async (req: Request, res: Response) => {
+  app.get(`/news`, async (req: Request, res: Response) => {
     await res.send(newsItems);
   });
 
